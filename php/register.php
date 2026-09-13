@@ -159,7 +159,7 @@ try {
 
         $profileCollection->insertOne([
             'user_id' => $userId,
-            'full_name' => $name,,
+            'full_name' => $name,
             'age' => $age,
             'bio' => $bio,
             'interests' => $interests,
