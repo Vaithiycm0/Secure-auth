@@ -7,6 +7,11 @@ require_once __DIR__ . '/vendor/autoload.php';
 use MongoDB\Client;
 use Predis\Client as RedisClient;
 
+/*
+|--------------------------------------------------------------------------
+| Environment helper
+|--------------------------------------------------------------------------
+*/
 function env(string $key, ?string $default = null): ?string
 {
     $value = getenv($key);
@@ -90,21 +95,13 @@ $mongoDb = $mongoClient->selectDatabase($mongoDatabase);
 
 /*
 |--------------------------------------------------------------------------
-| Redis connection
+| Redis / Valkey connection
 |--------------------------------------------------------------------------
 */
-$redisHost = env('REDIS_HOST', '127.0.0.1');
-$redisPort = (int) env('REDIS_PORT', '6379');
-$redisPassword = env('REDIS_PASSWORD', '');
+$redisUrl = env('REDIS_URL', '');
 
-$redisOptions = [
-    'scheme' => 'tcp',
-    'host' => $redisHost,
-    'port' => $redisPort,
-];
-
-if ($redisPassword !== '') {
-    $redisOptions['password'] = $redisPassword;
+if ($redisUrl === '') {
+    throw new RuntimeException('REDIS_URL is not configured.');
 }
 
-$redis = new RedisClient($redisOptions);
+$redis = new RedisClient($redisUrl);
