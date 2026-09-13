@@ -14,9 +14,12 @@ RUN apt-get update && apt-get install -y \
 # Apache rewrite support
 RUN a2enmod rewrite
 
-# MongoDB PHP extension with TLS/OpenSSL support
-RUN pecl install mongodb \
+# MongoDB PHP extension with OpenSSL/TLS support
+RUN pecl install --configureoptions='with-mongodb-ssl="openssl"' mongodb \
     && docker-php-ext-enable mongodb
+
+# Verify MongoDB driver was compiled with SSL support
+RUN php --ri mongodb | grep "libmongoc SSL => enabled"
 
 # Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
