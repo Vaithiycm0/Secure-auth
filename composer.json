@@ -1,0 +1,14 @@
+{
+    "name": "vaithiyanathan/secure-authentication-system",
+    "description": "Secure PHP authentication system using MySQL, MongoDB and Redis",
+    "authors": [
+        {
+            "name": "Vaithiy-777",
+            "email": "vaiithiycm00@gmail.com"
+        }
+    ],
+    "require": {
+        "mongodb/mongodb": "*",
+        "predis/predis": "^3.6"
+    }
+}
