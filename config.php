@@ -25,31 +25,42 @@ function env(string $key, ?string $default = null): ?string
 
 /*
 |--------------------------------------------------------------------------
-| Load environment variables from .env
+| Load .env for local development
 |--------------------------------------------------------------------------
+|
+| On Render, .env is not included in the Docker image.
+| Render provides environment variables directly.
+|
 */
 $envFile = __DIR__ . '/.env';
 
-if (!file_exists($envFile)) {
-    throw new RuntimeException('.env file not found.');
-}
+if (file_exists($envFile)) {
 
-$lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    $lines = file(
+        $envFile,
+        FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES
+    );
 
-foreach ($lines as $line) {
-    $line = trim($line);
+    foreach ($lines as $line) {
 
-    if ($line === '' || str_starts_with($line, '#')) {
-        continue;
-    }
+        $line = trim($line);
 
-    [$key, $value] = array_pad(explode('=', $line, 2), 2, '');
+        if ($line === '' || str_starts_with($line, '#')) {
+            continue;
+        }
 
-    $key = trim($key);
-    $value = trim($value);
+        [$key, $value] = array_pad(
+            explode('=', $line, 2),
+            2,
+            ''
+        );
 
-    if ($key !== '') {
-        putenv($key . '=' . $value);
+        $key = trim($key);
+        $value = trim($value);
+
+        if ($key !== '') {
+            putenv($key . '=' . $value);
+        }
     }
 }
 
@@ -58,6 +69,7 @@ foreach ($lines as $line) {
 | MySQL connection
 |--------------------------------------------------------------------------
 */
+
 $mysqlHost = env('MYSQL_HOST', '127.0.0.1');
 $mysqlPort = env('MYSQL_PORT', '3306');
 $mysqlDatabase = env('MYSQL_DATABASE', 'secure_auth');
@@ -87,21 +99,35 @@ $pdo = new PDO(
 | MongoDB connection
 |--------------------------------------------------------------------------
 */
-$mongoUri = env('MONGODB_URI', 'mongodb://127.0.0.1:27017');
-$mongoDatabase = env('MONGODB_DATABASE', 'secure_auth');
+
+$mongoUri = env(
+    'MONGODB_URI',
+    'mongodb://127.0.0.1:27017'
+);
+
+$mongoDatabase = env(
+    'MONGODB_DATABASE',
+    'secure_auth'
+);
 
 $mongoClient = new Client($mongoUri);
-$mongoDb = $mongoClient->selectDatabase($mongoDatabase);
+
+$mongoDb = $mongoClient->selectDatabase(
+    $mongoDatabase
+);
 
 /*
 |--------------------------------------------------------------------------
 | Redis / Valkey connection
 |--------------------------------------------------------------------------
 */
+
 $redisUrl = env('REDIS_URL', '');
 
 if ($redisUrl === '') {
-    throw new RuntimeException('REDIS_URL is not configured.');
+    throw new RuntimeException(
+        'REDIS_URL is not configured.'
+    );
 }
 
 $redis = new RedisClient($redisUrl);
