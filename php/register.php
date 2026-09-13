@@ -29,7 +29,7 @@ $username = trim((string) ($_POST['username'] ?? ''));
 $email = trim((string) ($_POST['email'] ?? ''));
 $password = (string) ($_POST['password'] ?? '');
 
-$name = trim((string) ($_POST['full_name'] ?? ''));
+$name = trim((string) ($_POST['full_name'] ?? $_POST['name'] ?? ''));
 $age = filter_var($_POST['age'] ?? null, FILTER_VALIDATE_INT);
 $bio = trim((string) ($_POST['bio'] ?? ''));
 $interestsInput = trim((string) ($_POST['interests'] ?? ''));
